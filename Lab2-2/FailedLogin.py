@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 LOGFILE = "Lab2-2/sample_auth_small.log"  # change filename if needed
 
 def simple_parser(line):
@@ -20,19 +22,14 @@ def simple_parser(line):
 ## This is the main block that will run first. 
 ## It will call any functions from above that we might need.
 if __name__ == "__main__":
-    uniquelist = []
-    count = 0
-    
-    with open(LOGFILE, "r") as f:
+   
+
+    counts = defaultdict(int)           # Create a dictionary to keep track of IPs
+
+    with open(LOGFILE) as f:
         for line in f:
-            count += 1 
-            if simple_parser(line) is not None: 
-                uniquelist.append(simple_parser(line))
-                
-print("Total lines read: " , count )
-
-print("Number of unique IPs: ", len(set(uniquelist)))
-
-print("First 10 unique IPs: ", sorted(list(set(uniquelist)))[:10])
-
-
+            if "Failed password" in line or "Invalid user" in line:
+                # extract ip
+                ip = simple_parser(line)
+                counts[ip] += 1
+    print(counts)

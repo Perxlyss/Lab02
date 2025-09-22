@@ -15,9 +15,6 @@ with open(Logs, 'r') as f:
     unique_ips = set(ips)
  
 
-    num_lines = sum(1 for count in open('Logs'))
-        print("Total lines:", num_lines)
-
 print("\nUnique IPs:")
 for ip in sorted(unique_ips):
     count += 1 
