@@ -1,4 +1,4 @@
-with open('sample.txt', 'r') as f:
-    f = open("copy.txt", "x")
-    f.write(sample.txt)
- 
+with open('output.txt', 'w') as f:
+    f.write("This is a new file.\n")
+    f.write("It has two lines.\n")
+    
