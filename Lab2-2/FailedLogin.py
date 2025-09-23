@@ -1,12 +1,9 @@
 from collections import defaultdict
 
-LOGFILE = "Lab2-2/sample_auth_small.log"  # change filename if needed
+LOGFILE = "Lab2-2/sample_auth_small.log" 
 
 def simple_parser(line):
-    """
-    looks for the substring ' port ' and returns the following port number.
-    Returns None if no matching substring found.
-    """
+    
     if " from " in line:
         parts = line.split() # splits the line into tokens, seperates by spaces by default
         try:
@@ -19,8 +16,7 @@ def simple_parser(line):
 
     return None
 
-## This is the main block that will run first. 
-## It will call any functions from above that we might need.
+
 if __name__ == "__main__":
    
 
@@ -29,7 +25,6 @@ if __name__ == "__main__":
     with open(LOGFILE) as f:
         for line in f:
             if "Failed password" in line or "Invalid user" in line:
-                # extract ip
                 ip = simple_parser(line)
                 counts[ip] += 1
     print(counts)
