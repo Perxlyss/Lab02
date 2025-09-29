@@ -1,8 +1,9 @@
-# lab2.3_starter.py
 import json
+import matplotlib.pyplot as plt
 from collections import defaultdict
 from datetime import datetime
 from datetime import timedelta
+
 
 LOGFILE = "Lab2-2/sample_auth_small.log"
 
@@ -38,6 +39,7 @@ def parse_auth_line(line):
     return ts, ip, event_type
 
 if __name__ == "__main__":
+    tab_threshold = 11 #if IP is under 11 chars long, it needs one more tab after it for nice formatting, used in report generating
     per_ip_timestamps = defaultdict(list)
     with open(LOGFILE) as f:
         for line in f:
@@ -45,31 +47,30 @@ if __name__ == "__main__":
             if ts and ip and event == "failed":   # checks that ts and ip are not null, and that event=="failed"
                 per_ip_timestamps[ip].append(ts)
 
-    #sliding window technique, search for counts of incidents, record those where are five under 10 minutes
-    incidents = []
-    window = timedelta(minutes=10)
+    attacker_counts = defaultdict(list)
+    ips = []
+    counts = []
     for ip, times in per_ip_timestamps.items():
-        times.sort()
-        n = len(times)
-        i = 0
-        while i < n:
-            j = i
-            while j + 1 < n and (times[j+1] - times[i]) <= window: #check 10 minute time window
-                j += 1
-            count = j - i + 1
-            if count >= 5:
-                incidents.append({
-                    "ip": ip,
-                    "count": count,
-                    "first": times[i].isoformat(),
-                    "last": times[j].isoformat()
-                })
-                # advance i past this cluster to avoid duplicate overlapping reports:
-                i = j + 1
-            else:
-                i += 1
+        attacker_counts[ip].append(len(times))
+        ips.append(ip)
+        counts.append(len(times))
 
-    print(f"Detected {len(incidents)} brute-force incidents")
-    for i in range(5):
-        print(incidents[i])
-    
+    sorted_counts = {k: v for k, v in sorted(attacker_counts.items(), key=lambda item: item[1], reverse=True)}
+
+    with open('BruteReport.txt', 'w') as f:
+        f.write("Top offending IPs")
+        f.write("\nIP              count")
+        for ip, count in sorted_counts.items():
+            if len(ip) < tab_threshold:
+                f.write(f"\n{ip}\t\t{count}")
+            else:
+                f.write(f"\n{ip}\t{count}")
+
+        plt.figure(figsize=(10,5))
+        plt.bar(ips, counts)
+        plt.title("Top Unique Attacker IPs")
+        plt.xlabel("IP")
+        plt.ylabel("Failed attempts")
+        plt.tight_layout()
+        plt.savefig("top_unique_attackers.png")
+        plt.show()

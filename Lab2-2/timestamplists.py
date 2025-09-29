@@ -18,7 +18,7 @@ def parse_auth_line(line):
     # timestamp: first 3 tokens 'Mar 10 13:58:01'
     ts_str = " ".join(parts[0:3])
     try:
-        ts = datetime.strptime(f"2025 {ts_str}", "%b %d %H:%M:%S")
+        ts = datetime.strptime(ts_str, "%b %d %H:%M:%S")
     except Exception:
         ts = None
     ip = None
@@ -46,6 +46,5 @@ if __name__ == "__main__":
     for ip, times in per_ip_timestamps.items():
         print(f"IP: {ip}")
         for t in times:
-            datetime.strftime(t, "%b %d %H:%M:%S")
-            print(f" {t}")
+            print(f"  {t.strftime('%b %d %H:%M:%S')}")
         
